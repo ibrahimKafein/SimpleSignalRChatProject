@@ -23,16 +23,20 @@ namespace SsignalRChatApp.Controllers
 
         public IActionResult Index()
         {
-            mContext.Database.EnsureCreated();
-
             MessengerNodeViewModel user = new MessengerNodeViewModel() { Value = HttpContext.Connection.Id, TimeStamp = new DateTime() };
-            mContext.Node.Add(user);
-            mContext.SaveChanges();
-
+            //try
+            //{
+            //    mContext.Database.EnsureCreated();
+            //    mContext.Node.Add(user);
+            //    mContext.SaveChanges();
+            //}catch(Exception e)
+            //{
+            //    //ignore log
+            //}
             // to to broadcatst "i am new" message from server side
             //nodeHubContext.Clients.All.NotifyMessageToClients(user.Id,HttpContext.Connection.Id);
 
-            ViewData["Title"] = user.Id;
+            ViewData["Title"] = String.IsNullOrEmpty(user.Id) ? HttpContext.Connection.Id.ToString() : user.Id;
             return View();
         }
 

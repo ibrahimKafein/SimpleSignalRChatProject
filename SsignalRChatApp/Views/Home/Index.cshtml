@@ -6,6 +6,10 @@
 
     <div class="row" style="min-height:100%">
         <div class="col-md-9">
+            <h2>Messages</h2>
+            <div class="pre-scrollable" id="messageContainer">
+                <ul id="messageList"></ul>
+            </div>
             <div class="container-fluid">
                 <div class="form-group">
                     @Html.HiddenFor(model => model.Id)
@@ -14,16 +18,13 @@
                         @Html.ValidationMessageFor(model => model.Value, "", new { @class = "text-danger" })
                     </div>
                     <div class="col-md-1">
-                        <input type="submit" value="Gönder" class="btn btn-primary" id="sendMessage" style="display:none"/>
+                        <input type="submit" value="Gönder" class="btn btn-primary" id="sendMessage" style="display:none" />
                     </div>
                 </div>
                 @*<input asp-action="add" class="form-control" id="chatMessage" placeholder="Type Message..." name="message">*@
             </div>
-            <div class="pre-scrollable" id="messageContainer">
-                <ul id="messageList"></ul>
-            </div>
         </div>
-        <div class="col-md-3 bg-warning">
+        <div class="col-md-3">
             <div class="container" id="Subscribers">
                 <div id="userName">@ViewData["Title"]</div>
                 <h2>Online</h2>
