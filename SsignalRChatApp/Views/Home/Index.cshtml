@@ -10,11 +10,11 @@
                 <div class="form-group">
                     @Html.HiddenFor(model => model.Id)
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.Value, new { htmlAttributes = new { @class = "form-control", @required = "required", @id = "chatMessage", @placeholder = "Type Message..." } })
+                        @Html.EditorFor(model => model.Value, new { htmlAttributes = new { @class = "form-control", @required = "required", @id = "chatMessage", @placeholder = "Type Message...", @autocomplete = "off" } })
                         @Html.ValidationMessageFor(model => model.Value, "", new { @class = "text-danger" })
                     </div>
                     <div class="col-md-1">
-                        <input type="submit" value="Gönder" class="btn btn-primary" id="sendMessage" />
+                        <input type="submit" value="Gönder" class="btn btn-primary" id="sendMessage" style="display:none"/>
                     </div>
                 </div>
                 @*<input asp-action="add" class="form-control" id="chatMessage" placeholder="Type Message..." name="message">*@
