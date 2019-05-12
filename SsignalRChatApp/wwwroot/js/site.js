@@ -1,4 +1,7 @@
-﻿
+﻿var lastFloodingTime = + new Date();
+const floodInterval = 3000; // 3 seconds
+var newerFloodId = lastFloodingTime;
+
 //#region Send message
 
 const connection = new signalR.HubConnectionBuilder()
@@ -34,28 +37,25 @@ const b2cConnection = new signalR.HubConnectionBuilder()
 
 // receive and send  "i am alive" (flooding)
 b2cConnection.on("SendMessage", (user, message) => {
-
+    
+    
+    // message about newer flooding operation?
+    if (message < newerFloodId)
+        return;
+    else newerFloodId = message;
+    
     // its me?
     if (echo(user))
         return;
 
-    // am i in newer flooding operation?
-    if (typeof $("#Subscribers div[floodId]").attr("floodId") != "undefined") {
-        if ($("#Subscribers div[floodId]").attr("floodId") > message) return;
+    var control = $("#Subscribers div a[userId=" + user + "]").attr("floodId", message);
+    if (typeof control !== undefined && control.length > 0) {
+        return;
     }
 
-    var news = $("#Subscribers div[floodid=" + message + "]");
-    $("#Subscribers div[id!=userName]").remove();
-    $("#Subscribers").append(news);
-
-    var control = $.grep($("#Subscribers div a"), function (n, i) { if (n.text == user) return true; });
-    if (typeof control === undefined || control.length > 0)
-        return;
-
     $("#Subscribers").append(createSubscriberElement(user, message));
-
     sendAliveMessage(message);
-
+    lastFloodingTime = +new Date();
 })
 
 b2cConnection.start().then(function () {
@@ -74,10 +74,8 @@ function echo(user) {
     return $("#userName").text() == user;
 }
 
-
 function createSubscriberElement(user, message) {
     const div = document.createElement("div");
-    div.setAttribute("floodId", message);
     const a = document.createElement("a");
     a.textContent = user;
     a.setAttribute("href", "#");
@@ -85,6 +83,8 @@ function createSubscriberElement(user, message) {
     span.className = "badge";
     span.textContent = "";
     a.append(span);
+    a.setAttribute("floodId", message);
+    a.setAttribute("userId", user);
     div.append(a);
     return div;
 }
@@ -105,3 +105,16 @@ function createMessageElement(user, message) {
     li.append(div);
     return li;
 }
+
+
+// check older subscribers
+setInterval(function () {
+    if ((+new Date()) - lastFloodingTime > floodInterval) {
+        $("#Subscribers div a").each(function (number, element) {
+            var floodId = element.getAttribute("floodId");
+            if ((floodId*1 + floodInterval) < newerFloodId)
+                element.parentElement.remove();
+        });
+    }
+    sendAliveMessage(+new Date());
+}, floodInterval);
