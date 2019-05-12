@@ -89,6 +89,7 @@ function createSubscriberElement(user, message) {
     const a = document.createElement("a");
     a.textContent = user;
     a.setAttribute("href", "#");
+    a.setAttribute("class", "glyphicon glyphicon-user")
     const span = document.createElement("span");
     span.className = "badge";
     span.textContent = "";
