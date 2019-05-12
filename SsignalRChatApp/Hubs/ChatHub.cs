@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Threading.Tasks;
 
-namespace SignalRChat.Hubs
+namespace SignalRChat
 {
     public class ChatHub : Hub
     {
@@ -9,6 +10,7 @@ namespace SignalRChat.Hubs
         {
             await Clients.All.SendAsync("ReceiveMessage", user, message);
         }
+
     }
 
 }

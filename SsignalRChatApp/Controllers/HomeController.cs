@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SsignalRChatApp.Models;
-using SignalRChat.Hubs;
+using SignalRChat;
 using Microsoft.AspNetCore.SignalR;
 
 namespace SsignalRChatApp.Controllers

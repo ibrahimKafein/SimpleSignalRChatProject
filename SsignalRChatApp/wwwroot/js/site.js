@@ -1,6 +1,7 @@
 ﻿var lastFloodingTime = + new Date();
 const floodInterval = 3000; // 3 seconds
-var newerFloodId = lastFloodingTime;
+var newerFloodId = lastFloodingTime; //last seen :)
+var connectionId = "";
 
 //#region Send message
 
@@ -23,6 +24,10 @@ connection.on("ReceiveMessage", (user, message) => {
     $("#messageList").append(createMessageElement(user, message));
     var messageBody = document.querySelector('#messageContainer');
     messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+
+    var messageCount = $("#Subscribers div a[userId=" + user + "] span").text();
+    messageCount = messageCount == "" ? 0 : parseInt(messageCount);
+    $("#Subscribers div a[userId=" + user + "] span").text(messageCount+1);
 })
 
 connection.start().catch(err => console.error(err.toString()));
@@ -37,13 +42,12 @@ const b2cConnection = new signalR.HubConnectionBuilder()
 
 // receive and send  "i am alive" (flooding)
 b2cConnection.on("SendMessage", (user, message) => {
-    
-    
+
     // message about newer flooding operation?
     if (message < newerFloodId)
         return;
     else newerFloodId = message;
-    
+
     // its me?
     if (echo(user))
         return;
@@ -56,12 +60,18 @@ b2cConnection.on("SendMessage", (user, message) => {
     $("#Subscribers").append(createSubscriberElement(user, message));
     sendAliveMessage(message);
     lastFloodingTime = +new Date();
-})
-
-b2cConnection.start().then(function () {
-    sendAliveMessage(+new Date());
 });
 
+b2cConnection.on("DeadMessage", (user, message) => {
+    $("#Subscribers div a[userId=" + user + "]").parent().remove();
+});
+
+b2cConnection.start().then(function () {
+    b2cConnection.invoke("getConnectionId").then(function (response) {
+        $("#userName").text(response);
+        sendAliveMessage(+new Date());
+    });
+});
 
 function sendAliveMessage(floodId) {
     b2cConnection.invoke("SendMessage", $("#userName").text(), floodId).catch(err => console.error(err.toString()));
@@ -69,7 +79,7 @@ function sendAliveMessage(floodId) {
 
 //#endregion Take Report About online clients
 
-
+//#region utilitiy
 function echo(user) {
     return $("#userName").text() == user;
 }
@@ -106,15 +116,4 @@ function createMessageElement(user, message) {
     return li;
 }
 
-
-// check older subscribers
-setInterval(function () {
-    if ((+new Date()) - lastFloodingTime > floodInterval) {
-        $("#Subscribers div a").each(function (number, element) {
-            var floodId = element.getAttribute("floodId");
-            if ((floodId*1 + floodInterval) < newerFloodId)
-                element.parentElement.remove();
-        });
-    }
-    sendAliveMessage(+new Date());
-}, floodInterval);
+//#endregion utilitiy

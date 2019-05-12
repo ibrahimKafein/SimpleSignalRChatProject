@@ -8,7 +8,7 @@ namespace SsignalRChatApp
     public interface ITypedHubClient
     {
         Task NotifyMessageToClients(string name, string message);
-
         Task SendMessage(string name, string message);
+        Task DeadMessage(string user, string message);
     }
 }
