@@ -27,6 +27,7 @@ namespace SsignalRChatApp
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString));
 
+            services.AddCors();
             services.AddMvc();
             services.AddSignalR();
         }
@@ -45,7 +46,7 @@ namespace SsignalRChatApp
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            app.UseCors(options => options.AllowAnyOrigin());
             app.UseStaticFiles();
             app.UseSignalR(routes =>
             {

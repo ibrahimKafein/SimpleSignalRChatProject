@@ -118,3 +118,14 @@ function createMessageElement(user, message) {
 }
 
 //#endregion utilitiy
+
+//external source test
+let accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrYXBhc2l0ZW1hdGlrQHRlem1ha3Nhbi5jb20udHIiLCJqdGkiOiI0MWU3MDEzYi1iMWYxLTRkMTAtYTUwMC03OWQ1MzcyNmM0NzIiLCJleHAiOjE1NjY0MDE5NTgsImlzcyI6InRlem1ha3Nhbi5jb20udHIiLCJhdWQiOiJ0ZXptYWtzYW4uY29tLnRyIn0.K9vPncSAZKx9Qxd_I6aJfy3fl6eQF7YgmhmB6PzoVDo";
+
+const connectionApiTest = new signalR.HubConnectionBuilder()
+    .withUrl("https://localhost:44307/MessageHub", {
+        accessTokenFactory: () => accessToken })
+        .build();
+
+connectionApiTest.start().catch(err => console.error(err.toString()));
+// 
